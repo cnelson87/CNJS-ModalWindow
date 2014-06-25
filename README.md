@@ -1,5 +1,5 @@
 # CNJS-ModalWindow
 
-ModalWindow widget and/or browserify module
+Base class to create modal windows
 
 Registration: `bower register CNJS-ModalWindow git://github.com/cnelson87/CNJS-ModalWindow.git`

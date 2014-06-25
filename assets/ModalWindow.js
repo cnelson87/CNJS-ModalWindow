@@ -5,7 +5,7 @@
 
 	VERSION: 0.1.0
 
-	USAGE: var myModalWindow = new Accordion('Elements', 'Options')
+	USAGE: var myModalWindow = new ModalWindow('Elements', 'Options')
 		@param {jQuery Object}
 		@param {Object}
 
