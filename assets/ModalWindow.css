@@ -1,0 +1,50 @@
+/*
+/* MODAL WINDOW
+/*-----------------------------------------------------*/
+
+a.btn-closeX, a.lnk-closeX {
+	display: inline-block;
+	padding: 1px 0.5em;
+	background: #ccc;
+	border: 2px solid #010101;
+	color: #010101;
+	font-weight: bold;
+	text-decoration: none;
+}
+a.btn-closeX:focus, a.btn-closeX:hover,
+a.lnk-closeX:focus, a.lnk-closeX:hover {
+	color: #fff;
+	background: #666;
+}
+
+.modal-target {display: none;}
+
+div#modaloverlay {
+	width: 100%;
+	height: 100%;
+	background: #000;
+	opacity: 0.7;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 8;
+	display: none;
+}
+
+div.modalwindow {
+	width: 480px;
+	border: 2px solid #000;
+	background: #fff;
+	position: fixed;
+	z-index: 10;
+}
+	div.modalwindow div.modalwindow-content {
+		min-height: 160px;
+		padding: 1em;
+	}
+	div.modalwindow a.btn-closeX,
+	div.modalwindow a.lnk-closeX {
+		position: absolute;
+		right: 6px;
+		top: 6px;
+	}
