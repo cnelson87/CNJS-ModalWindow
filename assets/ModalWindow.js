@@ -13,7 +13,7 @@
 
 	DEPENDENCIES:
 		- jQuery 1.10+
-		- jQuery.easing
+		- greensock
 		- Class.js
 
 */
@@ -37,6 +37,8 @@ var ModalWindow = Class.extend({
 			leftOffset: 0,
 			topOffset: 0,
 			minTopSpacing: 10,
+			animDuration: 0.2,
+			animEasing: 'Power4.easeIn',
 			fadeInOutSpeed: 200,
 			customEventPrfx: 'CNJS:ModalWindow'
 		}, objOptions || {});
@@ -71,7 +73,7 @@ var ModalWindow = Class.extend({
 		if (!this.$elOverlay.length) {
 			this.$elOverlay = $('<div></div>',{
 				'id': this.options.overlayID
-			}).appendTo(this.$body).hide();
+			}).appendTo(this.$body);//.hide();
 		}
 
 		//create modal
@@ -104,7 +106,15 @@ var ModalWindow = Class.extend({
 		}
 
 		//insert into DOM
-		this.$elModal.insertAfter(this.$elOverlay).hide();
+		this.$elModal.insertAfter(this.$elOverlay);//.hide();
+
+		TweenMax.set(this.$elOverlay, {
+			opacity: 0
+		});
+
+		TweenMax.set(this.$elModal, {
+			opacity: 0
+		});
 
 		//top pos assumes position:fixed by defalt, if position:absolute then top pos gets trickier.
 		this.isPosAbs = (this.$elModal.css('position') === 'absolute') ? true : false;
@@ -114,40 +124,40 @@ var ModalWindow = Class.extend({
 	bindEvents: function() {
 		var self = this;
 
-		this.$elTriggers.on('click', function(e) {
-			e.preventDefault();
+		this.$elTriggers.on('click', function(event) {
+			event.preventDefault();
 			if (!self.isModalActivated) {
 				self.$elActiveTrigger = $(this);
-				self.__clickTrigger(e);
+				self.__clickTrigger(event);
 			}
 		});
 
-		this.$btnClose.on('click', function(e) {
-			e.preventDefault();
+		this.$btnClose.on('click', function(event) {
+			event.preventDefault();
 			if (self.isModalActivated) {
 				self.closeModal();
 			}
 		});
 
-		this.$elOverlay.on('click', function(e) {
+		this.$elOverlay.on('click', function(event) {
 			if (self.isModalActivated) {
 				self.closeModal();
 			}
 		});
 
-		this.$document.on('focusin', function(e) {
-			if (self.isModalActivated && !self.$elModal.get(0).contains(e.target)) {
+		this.$document.on('focusin', function(event) {
+			if (self.isModalActivated && !self.$elModal.get(0).contains(event.target)) {
 				self.$elModal.focus();
 			}
 		});
 
-		this.$document.on('keydown', function(e) {
-			if (self.isModalActivated && e.keyCode == 27) {
+		this.$document.on('keydown', function(event) {
+			if (self.isModalActivated && event.keyCode == 27) {
 				self.closeModal();
 			}
 		});
 
-		this.$window.on('resize', function(e) {
+		this.$window.on('resize', function(event) {
 			self.setPosition();
 		});
 
@@ -158,7 +168,7 @@ var ModalWindow = Class.extend({
 *	Event Handlers
 **/
 
-	__clickTrigger: function(e) {
+	__clickTrigger: function(event) {
 		this.openModal();
 	},
 
@@ -212,20 +222,30 @@ var ModalWindow = Class.extend({
 
 		self.getContent();
 
-		//this.setContent();
-
 		this.setPosition();
 
-		this.$elOverlay.fadeIn(this.options.fadeInOutSpeed, 'linear', function() {
-			self.$elModal.fadeIn(self.options.fadeInOutSpeed, 'linear', function() {
+		TweenMax.to(this.$elOverlay, this.options.animDuration, {
+			display: 'block',
+			opacity: 1,
+			ease: self.options.animEasing,
+			onComplete: function() {
 
-				self.$elModal.addClass(self.options.activeClass);
+				TweenMax.to(self.$elModal, self.options.animDuration, {
+					display: 'block',
+					opacity: 1,
+					ease: self.options.animEasing,
+					onComplete: function() {
 
-				self.$elModal.focus();
+						self.$elModal.addClass(self.options.activeClass);
 
-				$.event.trigger(self.options.customEventPrfx + ':modalOpened', [self.options.modalID]);
+						self.$elModal.focus();
 
-			});
+						$.event.trigger(self.options.customEventPrfx + ':modalOpened', [self.options.modalID]);
+
+					}
+				});
+
+			}
 		});
 
 	},
@@ -233,20 +253,39 @@ var ModalWindow = Class.extend({
 	closeModal: function() {
 		var self = this;
 
-		this.$elModal.fadeOut(this.options.fadeInOutSpeed, 'linear', function() {
-			self.$elModal.removeClass(self.options.activeClass);
 
-			self.$elContent.empty();
-			self.contentHTML = '';
 
-			self.$elOverlay.fadeOut(self.options.fadeInOutSpeed, 'linear');
+		TweenMax.to(this.$elModal, this.options.animDuration, {
+			//display: 'block',
+			opacity: 0,
+			ease: self.options.animEasing,
+			onComplete: function() {
+				self.$elModal.removeClass(self.options.activeClass);
 
-			self.$elActiveTrigger.focus();
+				TweenMax.to(self.$elOverlay, self.options.animDuration, {
+					//display: 'block',
+					opacity: 0,
+					ease: self.options.animEasing,
+					onComplete: function() {
 
-			self.isModalActivated = false;
+						TweenMax.set(self.$elModal, {
+							display: 'none'
+						});
 
-			$.event.trigger(self.options.customEventPrfx + ':modalClosed', [self.options.modalID]);
+						TweenMax.set(self.$elOverlay, {
+							display: 'none'
+						});
 
+						self.$elActiveTrigger.focus();
+
+						self.isModalActivated = false;
+
+						$.event.trigger(self.options.customEventPrfx + ':modalClosed', [self.options.modalID]);
+
+					}
+				});
+
+			}
 		});
 
 	}

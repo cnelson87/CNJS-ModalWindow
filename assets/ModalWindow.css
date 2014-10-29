@@ -4,7 +4,7 @@
 
 a.btn-closeX, a.lnk-closeX {
 	display: inline-block;
-	padding: 1px 0.5em;
+	padding: 4px 12px;
 	background: #ccc;
 	border: 2px solid #010101;
 	color: #010101;
@@ -19,32 +19,60 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 
 .modal-target {display: none;}
 
-div#modaloverlay {
+#modaloverlay {
+	display: none;
 	width: 100%;
 	height: 100%;
-	background: #000;
-	opacity: 0.7;
+	background: rgba(0,0,0,0.7);
 	position: fixed;
 	left: 0;
 	top: 0;
 	z-index: 8;
-	display: none;
 }
 
-div.modalwindow {
-	width: 480px;
+.modalwindow {
+	display: none;
+	width: 320px;
 	border: 2px solid #000;
 	background: #fff;
 	position: fixed;
 	z-index: 10;
 }
-	div.modalwindow div.modalwindow-content {
-		min-height: 160px;
-		padding: 1em;
+.modalwindow.modal-wide {
+	width: 320px;
+}
+	.modalwindow .modalwindow-content {
+		min-height: 200px;
+		padding: 36px 20px 20px 20px;
 	}
-	div.modalwindow a.btn-closeX,
-	div.modalwindow a.lnk-closeX {
+	.modalwindow a.btn-closeX,
+	.modalwindow a.lnk-closeX {
 		position: absolute;
-		right: 6px;
-		top: 6px;
+		right: -8px;
+		top: -8px;
 	}
+
+
+@media (min-width: 768px) {
+
+	.modalwindow {
+		width: 480px;
+	}
+	.modalwindow.modal-wide {
+		width: 600px;
+	}
+
+}
+
+
+@media (min-width: 1024px) {
+
+	.modalwindow {
+		width: 600px;
+	}
+	.modalwindow.modal-wide {
+		width: 800px;
+	}
+
+}
+
