@@ -38,6 +38,7 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 	position: fixed;
 	z-index: 10;
 }
+.modalwindow.modal-small,
 .modalwindow.modal-wide {
 	width: 320px;
 }
@@ -58,6 +59,9 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 	.modalwindow {
 		width: 480px;
 	}
+	.modalwindow.modal-small {
+		width: 320px;
+	}
 	.modalwindow.modal-wide {
 		width: 600px;
 	}
@@ -69,6 +73,9 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 
 	.modalwindow {
 		width: 600px;
+	}
+	.modalwindow.modal-small {
+		width: 480px;
 	}
 	.modalwindow.modal-wide {
 		width: 800px;

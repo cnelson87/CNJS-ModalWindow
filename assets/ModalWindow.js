@@ -30,6 +30,7 @@ var ModalWindow = Class.extend({
 			//selectorTriggers: 'a.modal-trigger',
 			modalID: 'modalwindow',
 			modalClass: 'modalwindow',
+			extraClasses: '',
 			overlayID: 'modaloverlay',
 			closeBtnClass: 'btn-closeX',
 			closeBtnInnerHTML: '<span>X</span>', //ex: '<span class="offscreen">close window</span>'
@@ -81,7 +82,7 @@ var ModalWindow = Class.extend({
 		if (!this.$elModal.length) {
 			this.$elModal = $('<div></div>', {
 				'id': this.options.modalID,
-				'class': this.options.modalClass,
+				'class': this.options.modalClass + ' ' + this.options.extraClasses,
 				'role': 'dialog',
 				'tabindex': '-1'
 			});
