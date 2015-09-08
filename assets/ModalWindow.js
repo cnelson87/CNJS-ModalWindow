@@ -9,7 +9,7 @@
 		@param {jQuery Object}
 		@param {Object}
 
-	AUTHORS: CN
+	AUTHOR: CN
 
 	DEPENDENCIES:
 		- jQuery 1.10+
@@ -254,8 +254,6 @@ var ModalWindow = Class.extend({
 	closeModal: function() {
 		var self = this;
 
-
-
 		TweenMax.to(this.$elModal, this.options.animDuration, {
 			//display: 'block',
 			opacity: 0,
@@ -292,7 +290,6 @@ var ModalWindow = Class.extend({
 	}
 
 });
-
 
 //uncomment to use as a browserify module
 //module.exports = ModalWindow;

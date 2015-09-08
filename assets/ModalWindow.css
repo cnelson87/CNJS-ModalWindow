@@ -53,8 +53,13 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 		top: -8px;
 	}
 
+/* Mobile */
+@media (max-width: 767px) {
 
-@media (min-width: 768px) {
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
 
 	.modalwindow {
 		width: 480px;
@@ -68,7 +73,7 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 
 }
 
-
+/* Desktop */
 @media (min-width: 1024px) {
 
 	.modalwindow {
@@ -82,4 +87,3 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 	}
 
 }
-
