@@ -3,7 +3,7 @@
 
 	DESCRIPTION: Base class to create modal windows
 
-	VERSION: 0.1.0
+	VERSION: 0.2.0
 
 	USAGE: var myModalWindow = new ModalWindow('Elements', 'Options')
 		@param {jQuery Object}
@@ -12,8 +12,7 @@
 	AUTHOR: CN
 
 	DEPENDENCIES:
-		- jQuery 1.10+
-		- greensock
+		- jQuery 2.1.4+
 		- Class.js
 
 */
@@ -22,7 +21,6 @@ var ModalWindow = Class.extend({
 	init: function($triggers, objOptions) {
 
 		// defaults
-		this.$window = $(window);
 		this.$document = $(document);
 		this.$body = $('body');
 		this.$elTriggers = $triggers;
@@ -35,12 +33,8 @@ var ModalWindow = Class.extend({
 			closeBtnClass: 'btn-closeX',
 			closeBtnInnerHTML: '<span>X</span>', //ex: '<span class="offscreen">close window</span>'
 			activeClass: 'active',
-			leftOffset: 0,
-			topOffset: 0,
-			minTopSpacing: 10,
-			animDuration: 0.2,
-			animEasing: 'Power4.easeIn',
-			fadeInOutSpeed: 200,
+			activeBodyClass: 'modal-active',
+			animDuration: 400,
 			customEventPrfx: 'CNJS:ModalWindow'
 		}, objOptions || {});
 
@@ -53,7 +47,6 @@ var ModalWindow = Class.extend({
 
 		// setup & properties
 		this.isModalActivated = false;
-		this.isPosAbs = false; //position:absolute;
 		this.contentHTML = null;
 
 		this.initDOM();
@@ -74,7 +67,7 @@ var ModalWindow = Class.extend({
 		if (!this.$elOverlay.length) {
 			this.$elOverlay = $('<div></div>',{
 				'id': this.options.overlayID
-			}).appendTo(this.$body);//.hide();
+			}).appendTo(this.$body);
 		}
 
 		//create modal
@@ -102,23 +95,12 @@ var ModalWindow = Class.extend({
 			this.$btnClose = $('<a></a>', {
 				'class': this.options.closeBtnClass,
 				'href': '#close',
-				'title': 'close window'
+				'title': 'close'
 			}).html(this.options.closeBtnInnerHTML).appendTo(this.$elModal);
 		}
 
 		//insert into DOM
-		this.$elModal.insertAfter(this.$elOverlay);//.hide();
-
-		TweenMax.set(this.$elOverlay, {
-			opacity: 0
-		});
-
-		TweenMax.set(this.$elModal, {
-			opacity: 0
-		});
-
-		//top pos assumes position:fixed by defalt, if position:absolute then top pos gets trickier.
-		this.isPosAbs = (this.$elModal.css('position') === 'absolute') ? true : false;
+		this.$elModal.insertAfter(this.$elOverlay);
 
 	},
 
@@ -129,7 +111,7 @@ var ModalWindow = Class.extend({
 			event.preventDefault();
 			if (!self.isModalActivated) {
 				self.$elActiveTrigger = $(this);
-				self.__clickTrigger(event);
+				self.openModal();
 			}
 		});
 
@@ -147,7 +129,7 @@ var ModalWindow = Class.extend({
 		});
 
 		this.$document.on('focusin', function(event) {
-			if (self.isModalActivated && !self.$elModal.get(0).contains(event.target)) {
+			if (self.isModalActivated && !self.$elModal[0].contains(event.target)) {
 				self.$elModal.focus();
 			}
 		});
@@ -158,50 +140,12 @@ var ModalWindow = Class.extend({
 			}
 		});
 
-		this.$window.on('resize', function(event) {
-			self.setPosition();
-		});
-
-	},
-
-
-/**
-*	Event Handlers
-**/
-
-	__clickTrigger: function(event) {
-		this.openModal();
 	},
 
 
 /**
 *	Public Methods
 **/
-
-	setPosition: function() {
-		var docWidth = this.$document.width();
-		var winHeight = this.$window.height();
-		var winScrollTop = this.$window.scrollTop();
-		var modalWidth = this.$elModal.outerWidth();
-		var modalHeight = this.$elModal.outerHeight();
-		var minTopSpacing = this.options.minTopSpacing;
-		var leftPos = (((docWidth - modalWidth) / 2) + this.options.leftOffset);
-		var topPos = (((winHeight - modalHeight) / 2) + this.options.topOffset);
-
-		if (this.isPosAbs) {
-			topPos += winScrollTop;
-			if (topPos < winScrollTop + minTopSpacing) {
-				topPos = winScrollTop + minTopSpacing;
-			}
-		} else {
-			if (topPos < minTopSpacing) {
-				topPos = minTopSpacing;
-			}
-		}
-
-		this.$elModal.css({left: leftPos + 'px', top: topPos + 'px'});
-
-	},
 
 	// extend or override getContent in subclass to create custom modal
 	getContent: function() {
@@ -211,7 +155,6 @@ var ModalWindow = Class.extend({
 		this.setContent();
 	},
 
-	// extend or override setContent in subclass to create custom modal
 	setContent: function() {
 		this.$elContent.html(this.contentHTML);
 	},
@@ -221,71 +164,40 @@ var ModalWindow = Class.extend({
 
 		this.isModalActivated = true;
 
-		self.getContent();
+		this.getContent();
 
-		this.setPosition();
+		this.$body.addClass(this.options.activeBodyClass);
+		this.$elOverlay.show();
+		this.$elModal.show();
 
-		TweenMax.to(this.$elOverlay, this.options.animDuration, {
-			display: 'block',
-			opacity: 1,
-			ease: self.options.animEasing,
-			onComplete: function() {
+		setTimeout(function() {
 
-				TweenMax.to(self.$elModal, self.options.animDuration, {
-					display: 'block',
-					opacity: 1,
-					ease: self.options.animEasing,
-					onComplete: function() {
+			this.$elOverlay.addClass(this.options.activeClass);
+			this.$elModal.addClass(this.options.activeClass);
 
-						self.$elModal.addClass(self.options.activeClass);
+			setTimeout(function() {
+				this.$elModal.focus();
+				$.event.trigger(this.options.customEventPrfx + ':modalOpened', [this.options.modalID]);
+			}.bind(this), this.options.animDuration);
 
-						self.$elModal.focus();
-
-						$.event.trigger(self.options.customEventPrfx + ':modalOpened', [self.options.modalID]);
-
-					}
-				});
-
-			}
-		});
+		}.bind(this), 10);
 
 	},
 
 	closeModal: function() {
 		var self = this;
 
-		TweenMax.to(this.$elModal, this.options.animDuration, {
-			//display: 'block',
-			opacity: 0,
-			ease: self.options.animEasing,
-			onComplete: function() {
-				self.$elModal.removeClass(self.options.activeClass);
+		this.$body.removeClass(this.options.activeBodyClass);
+		this.$elOverlay.removeClass(this.options.activeClass);
+		this.$elModal.removeClass(this.options.activeClass);
 
-				TweenMax.to(self.$elOverlay, self.options.animDuration, {
-					//display: 'block',
-					opacity: 0,
-					ease: self.options.animEasing,
-					onComplete: function() {
-
-						TweenMax.set(self.$elModal, {
-							display: 'none'
-						});
-
-						TweenMax.set(self.$elOverlay, {
-							display: 'none'
-						});
-
-						self.$elActiveTrigger.focus();
-
-						self.isModalActivated = false;
-
-						$.event.trigger(self.options.customEventPrfx + ':modalClosed', [self.options.modalID]);
-
-					}
-				});
-
-			}
-		});
+		setTimeout(function() {
+			this.isModalActivated = false;
+			this.$elOverlay.hide();
+			this.$elModal.hide();
+			this.$elActiveTrigger.focus();
+			$.event.trigger(this.options.customEventPrfx + ':modalClosed', [this.options.modalID]);
+		}.bind(this), this.options.animDuration);
 
 	}
 

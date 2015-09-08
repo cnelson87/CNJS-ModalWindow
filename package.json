@@ -13,8 +13,5 @@
 		"type": "git",
 		"url": "https://github.com/cnelson87/CNJS-ModalWindow"
 	},
-	"dependencies": {
-		"jquery": "~2.1.4",
-		"Class.js": "~1.0.0"
-	}
+	"readmeFilename": "README.md"
 }
