@@ -135,7 +135,7 @@ var ModalWindow = Class.extend({
 		});
 
 		this.$document.on('keydown', function(event) {
-			if (self.isModalActivated && event.keyCode == 27) {
+			if (self.isModalActivated && event.keyCode === 27) {
 				self.closeModal();
 			}
 		});

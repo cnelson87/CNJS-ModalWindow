@@ -9,6 +9,11 @@ html.touch body.modal-active {
 	position: fixed; /* needed for mobile / touch */
 }
 
+script[type="text/template"] {
+	display: none;
+	visibility: hidden;
+}
+
 a.btn-closeX, a.lnk-closeX {
 	display: inline-block;
 	width: 32px;
@@ -26,8 +31,6 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 	color: #fff;
 	background: #666;
 }
-
-.modal-target {display: none;}
 
 #modaloverlay {
 	display: none;
