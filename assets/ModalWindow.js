@@ -195,6 +195,7 @@ var ModalWindow = Class.extend({
 			this.isModalActivated = false;
 			this.$elOverlay.hide();
 			this.$elModal.hide();
+			this.$elContent.empty();
 			this.$elActiveTrigger.focus();
 			$.event.trigger(this.options.customEventPrfx + ':modalClosed', [this.options.modalID]);
 		}.bind(this), this.options.animDuration);
