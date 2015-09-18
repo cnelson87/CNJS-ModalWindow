@@ -1,13 +1,10 @@
 {
 	"name": "CNJS-ModalWindow",
 	"description": "Base class to create modal windows",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"main": [
 		"assets/ModalWindow.js",
 		"assets/ModalWindow.css"
-	],
-	"authors": [
-		"Chris Nelson <cnelson87@gmail.com>"
 	],
 	"repository": {
 		"type": "git",
@@ -17,5 +14,7 @@
 		"jquery": "~2.1.4",
 		"Class.js": "~1.0.0"
 	},
-	"ignore": []
+	"ignore": [],
+	"license": "MIT",
+	"author": "Chris Nelson <cnelson87@gmail.com>"
 }
