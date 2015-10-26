@@ -12,7 +12,7 @@
 	AUTHOR: CN
 
 	DEPENDENCIES:
-		- jQuery 2.1.4+
+		- jquery 2.1x+
 		- Class.js
 
 */
