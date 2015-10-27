@@ -3,7 +3,7 @@
 
 	DESCRIPTION: Base class to create modal windows
 
-	VERSION: 0.2.0
+	VERSION: 0.2.2
 
 	USAGE: var myModalWindow = new ModalWindow('Elements', 'Options')
 		@param {jQuery Object}
@@ -23,7 +23,7 @@ var ModalWindow = Class.extend({
 		// defaults
 		this.$document = $(document);
 		this.$body = $('body');
-		this.$elTriggers = $triggers;
+		this.$triggers = $triggers;
 		this.options = $.extend({
 			//selectorTriggers: 'a.modal-trigger',
 			modalID: 'modalwindow',
@@ -35,15 +35,15 @@ var ModalWindow = Class.extend({
 			activeClass: 'active',
 			activeBodyClass: 'modal-active',
 			animDuration: 400,
-			customEventPrfx: 'CNJS:ModalWindow'
+			customEventName: 'CNJS:ModalWindow'
 		}, objOptions || {});
 
 		// element references
-		this.$elActiveTrigger = null;
-		this.$elOverlay = null;
-		this.$elModal = null;
-		this.$elContent = null;
-		this.$btnClose = null;
+		this.$activeTrigger = null;
+		this.$overlay = null;
+		this.$modal = null;
+		this.$content = null;
+		this.$closeBtn = null;
 
 		// setup & properties
 		this.isModalActivated = false;
@@ -63,82 +63,81 @@ var ModalWindow = Class.extend({
 	initDOM: function() {
 
 		//create overlay
-		this.$elOverlay = $('#' + this.options.overlayID);
-		if (!this.$elOverlay.length) {
-			this.$elOverlay = $('<div></div>',{
-				'id': this.options.overlayID
-			}).appendTo(this.$body);
+		this.$overlay = $('#' + this.options.overlayID);
+		if (!this.$overlay.length) {
+			this.$overlay = $('<div id="' + this.options.overlayID + '"></div>').appendTo(this.$body);
 		}
 
 		//create modal
-		this.$elModal = $('#' + this.options.modalID);
-		if (!this.$elModal.length) {
-			this.$elModal = $('<div></div>', {
+		this.$modal = $('#' + this.options.modalID);
+		if (!this.$modal.length) {
+			this.$modal = $('<div></div>', {
 				'id': this.options.modalID,
 				'class': this.options.modalClass + ' ' + this.options.extraClasses,
+				'aria-hidden': 'true',
 				'role': 'dialog',
 				'tabindex': '-1'
 			});
 		}
 
 		//create modal content
-		this.$elContent = this.$elModal.find('.' + this.options.modalClass + '-content');
-		if (!this.$elContent.length) {
-			this.$elContent = $('<div></div>', {
-				'class': this.options.modalClass + '-content'
-			}).appendTo(this.$elModal);
+		this.$content = this.$modal.find('.' + this.options.modalClass + '-content');
+		if (!this.$content.length) {
+			this.$content = $('<div></div>', {
+				'class': this.options.modalClass + '-content',
+				'role': 'document'
+			}).appendTo(this.$modal);
 		}
 
 		//insert close button
-		this.$btnClose = this.$elModal.find('.' + this.options.closeBtnClass);
-		if (!this.$btnClose.length) {
-			this.$btnClose = $('<a></a>', {
+		this.$closeBtn = this.$modal.find('.' + this.options.closeBtnClass);
+		if (!this.$closeBtn.length) {
+			this.$closeBtn = $('<a></a>', {
 				'class': this.options.closeBtnClass,
 				'href': '#close',
 				'title': 'close'
-			}).html(this.options.closeBtnInnerHTML).appendTo(this.$elModal);
+			}).html(this.options.closeBtnInnerHTML).appendTo(this.$modal);
 		}
 
 		//insert into DOM
-		this.$elModal.insertAfter(this.$elOverlay);
+		this.$modal.insertAfter(this.$overlay);
 
 	},
 
 	bindEvents: function() {
-		var self = this;
 
-		this.$elTriggers.on('click', function(event) {
+		this.$triggers.on('click', function(event) {
 			event.preventDefault();
-			if (!self.isModalActivated) {
-				self.$elActiveTrigger = $(this);
-				self.openModal();
+			if (!this.isModalActivated) {
+				this.$activeTrigger = $(event.currentTarget);
+				this.openModal();
 			}
-		});
+		}.bind(this));
 
-		this.$btnClose.on('click', function(event) {
+		this.$closeBtn.on('click', function(event) {
 			event.preventDefault();
-			if (self.isModalActivated) {
-				self.closeModal();
+			if (this.isModalActivated) {
+				this.closeModal();
 			}
-		});
+		}.bind(this));
 
-		this.$elOverlay.on('click', function(event) {
-			if (self.isModalActivated) {
-				self.closeModal();
+		this.$overlay.on('click', function(event) {
+			if (this.isModalActivated) {
+				this.closeModal();
 			}
-		});
+		}.bind(this));
 
 		this.$document.on('focusin', function(event) {
-			if (self.isModalActivated && !self.$elModal[0].contains(event.target)) {
-				self.$elModal.focus();
+			if (this.isModalActivated && !this.$modal[0].contains(event.target)) {
+				this.$modal.focus();
 			}
-		});
+		}.bind(this));
 
 		this.$document.on('keydown', function(event) {
-			if (self.isModalActivated && event.keyCode === 27) {
-				self.closeModal();
+			if (this.isModalActivated && event.keyCode === 27) {
+				this.closeModal();
 			}
-		});
+		}.bind(this));
 
 	},
 
@@ -149,14 +148,14 @@ var ModalWindow = Class.extend({
 
 	// extend or override getContent in subclass to create custom modal
 	getContent: function() {
-		var targetID = this.$elActiveTrigger.data('targetid') || this.$elActiveTrigger.attr('href').replace('#','');
+		var targetID = this.$activeTrigger.data('targetid') || this.$activeTrigger.attr('href').replace('#','');
 		var targetEl = $('#' + targetID);
 		this.contentHTML = targetEl.html();
 		this.setContent();
 	},
 
 	setContent: function() {
-		this.$elContent.html(this.contentHTML);
+		this.$content.html(this.contentHTML);
 	},
 
 	openModal: function() {
@@ -167,17 +166,17 @@ var ModalWindow = Class.extend({
 		this.getContent();
 
 		this.$body.addClass(this.options.activeBodyClass);
-		this.$elOverlay.show();
-		this.$elModal.show();
+		this.$overlay.show();
+		this.$modal.show();
 
 		setTimeout(function() {
 
-			this.$elOverlay.addClass(this.options.activeClass);
-			this.$elModal.addClass(this.options.activeClass);
+			this.$overlay.addClass(this.options.activeClass);
+			this.$modal.addClass(this.options.activeClass).attr({'aria-hidden':'false'});
 
 			setTimeout(function() {
-				this.$elModal.focus();
-				$.event.trigger(this.options.customEventPrfx + ':modalOpened', [this.options.modalID]);
+				this.$modal.focus();
+				$.event.trigger(this.options.customEventName + ':modalOpened', [this.options.modalID]);
 			}.bind(this), this.options.animDuration);
 
 		}.bind(this), 10);
@@ -188,16 +187,16 @@ var ModalWindow = Class.extend({
 		var self = this;
 
 		this.$body.removeClass(this.options.activeBodyClass);
-		this.$elOverlay.removeClass(this.options.activeClass);
-		this.$elModal.removeClass(this.options.activeClass);
+		this.$overlay.removeClass(this.options.activeClass);
+		this.$modal.removeClass(this.options.activeClass).attr({'aria-hidden':'true'});
 
 		setTimeout(function() {
 			this.isModalActivated = false;
-			this.$elOverlay.hide();
-			this.$elModal.hide();
-			this.$elContent.empty();
-			this.$elActiveTrigger.focus();
-			$.event.trigger(this.options.customEventPrfx + ':modalClosed', [this.options.modalID]);
+			this.$overlay.hide();
+			this.$modal.hide();
+			this.$content.empty();
+			this.$activeTrigger.focus();
+			$.event.trigger(this.options.customEventName + ':modalClosed', [this.options.modalID]);
 		}.bind(this), this.options.animDuration);
 
 	}
