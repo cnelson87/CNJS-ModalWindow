@@ -43,23 +43,15 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 	left: 0; right: 0;
 	top: 0; bottom: 0;
 	z-index: 10;
-	-webkit-transition: opacity 0.2s, visibility 0.2s;
-	-moz-transition: opacity 0.2s, visibility 0.2s;
 	transition: opacity 0.2s, visibility 0.2s;
-	-webkit-transition-delay: 0.1s;
-	-moz-transition-delay: 0.1s;
 	transition-delay: 0.1s;
 }
 #modaloverlay.active {
 	/*display: block;*/
 	visibility: visible;
 	opacity: 1;
-	-webkit-transition: opacity 0.2s, visibility 0.2s;
-	-moz-transition: opacity 0.2s, visibility 0.2s;
 	transition: opacity 0.2s, visibility 0.2s;
-	-webkit-transition-delay: 0;
-	-moz-transition-delay: 0;
-	transition-delay: 0;
+	transition-delay: 0s;
 }
 
 .modalwindow {
@@ -70,22 +62,14 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 	padding: 40px 0 20px 0;
 	position: fixed;
 	z-index: 11;
-	-webkit-transition: opacity 0.2s, visibility 0.2s;
-	-moz-transition: opacity 0.2s, visibility 0.2s;
 	transition: opacity 0.2s, visibility 0.2s;
-	-webkit-transition-delay: 0;
-	-moz-transition-delay: 0;
-	transition-delay: 0;
+	transition-delay: 0s;
 }
 .modalwindow.active {
 	/*display: block;*/
 	visibility: visible;
 	opacity: 1;
-	-webkit-transition: opacity 0.2s, visibility 0.2s;
-	-moz-transition: opacity 0.2s, visibility 0.2s;
 	transition: opacity 0.2s, visibility 0.2s;
-	-webkit-transition-delay: 0.1s;
-	-moz-transition-delay: 0.1s;
 	transition-delay: 0.1s;
 }
 	.modalwindow a.btn-closeX,
@@ -125,36 +109,39 @@ a.lnk-closeX:focus, a.lnk-closeX:hover {
 
 }
 
-/* Tablet */
-@media (min-width: 768px) and (max-width: 1023px) {
+/* Tablet+ */
+@media (min-width: 768px) {
 
 	.modalwindow {
 		width: 480px;
-		min-height: 240px;
+		height: auto;
+		min-height: 320px;
 		max-height: calc(100% - 40px);
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -50%);
 	}
 	.modalwindow.modal-small {
-		width: 320px;
+		width: 400px;
 	}
 	.modalwindow.modal-wide {
 		width: 600px;
 	}
+	.modalwindow.full-size {
+		width: calc(100% - 40px);
+		height: calc(100% - 40px);
+		left: 20px; right: 20px;
+		top: 20px; bottom: 20px;
+		transform: none;
+	}
 
 }
 
-/* Desktop */
+/* Desktop+ */
 @media (min-width: 1024px) {
 
 	.modalwindow {
 		width: 600px;
-		min-height: 240px;
-		max-height: calc(100% - 40px);
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
 	}
 	.modalwindow.modal-small {
 		width: 480px;
